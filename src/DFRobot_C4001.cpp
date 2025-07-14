@@ -672,20 +672,18 @@ sAllData_t DFRobot_C4001::anaysisData(uint8_t * data, uint8_t len)
     allData.sta.workStatus = 1;
     allData.sta.initStatus = 1;
     char *token;
-    char *parts[10]; // Let's say there are at most 10 parts
+    char *parts[10] = {0}; // Let's say there are at most 10 parts
     int index = 0;   // Used to track the number of parts stored
     token = strtok((char*)(data+location), ",");
-    while (token != NULL) {
-      parts[index] = token; // Stores partial Pointers in an array
-      if(index++ > 8){
-        break;
-      }
+    while (token != NULL && index < 10) {
+      parts[index++] = token; // Stores partial Pointers in an array
       token = strtok(NULL, ","); // Continue to extract the next section
     }
-    allData.target.number = atoi(parts[1]);
-    allData.target.range = atof(parts[3]) * 100;
-    allData.target.speed = atof(parts[4]) * 100;
-    allData.target.energy = atof(parts[5]);
+    // Defensive: check we have enough fields and they are not NULL
+    allData.target.number = (index > 1 && parts[1]) ? atoi(parts[1]) : 0;
+    allData.target.range  = (index > 3 && parts[3]) ? atof(parts[3]) * 100 : 0;
+    allData.target.speed  = (index > 4 && parts[4]) ? atof(parts[4]) * 100 : 0;
+    allData.target.energy = (index > 5 && parts[5]) ? atof(parts[5]) : 0;
   }else{
   }
   return allData;
