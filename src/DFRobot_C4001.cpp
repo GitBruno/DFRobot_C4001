@@ -806,7 +806,7 @@ int16_t DFRobot_C4001_I2C::readReg(uint8_t reg, uint8_t *data, uint8_t len)
 bool DFRobot_C4001_UART::begin()
 {
   #ifdef ESP32
-    _serial->begin(this->_baud, SERIAL_8N1, _txpin, _rxpin);
+    _serial->begin(this->_baud, SERIAL_8N1, _rxpin, _txpin);
   #elif defined(ARDUINO_AVR_UNO) || defined(ESP8266)
     _serial->begin(this->_baud);
     delay(1000);
