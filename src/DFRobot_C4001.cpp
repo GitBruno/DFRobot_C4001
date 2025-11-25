@@ -16,7 +16,7 @@ DFRobot_C4001::~DFRobot_C4001(){}
 sSensorStatus_t DFRobot_C4001::getStatus(void)
 {
   sSensorStatus_t data;
-  uint8_t temp[100] = {0};
+  uint8_t temp[DFROBOT_C4001_BUFFER_SIZE] = {0};
   uint8_t len = 0;
   if(uartI2CFlag == I2C_FLAG){
     uint8_t temp = 0;
@@ -26,11 +26,11 @@ sSensorStatus_t DFRobot_C4001::getStatus(void)
     data.initStatus = (temp&0x80) >> 7;
   }else{  
     sAllData_t allData;
-    readReg(0, temp, 100);
+    readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
     writeReg(0, (uint8_t *)START_SENSOR, strlen(START_SENSOR));
     while(len == 0){
       delay(1000);
-      len = readReg(0, temp, 100);
+      len = readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
       allData = anaysisData(temp ,len);
     }
     data.workStatus = allData.sta.workStatus;
@@ -53,9 +53,9 @@ bool DFRobot_C4001::motionDetection(void)
     static bool old = false;
     uint8_t status = 0;
     uint8_t len = 0;
-    uint8_t temp[100] = {0};
+    uint8_t temp[DFROBOT_C4001_BUFFER_SIZE] = {0};
     sAllData_t data;
-    len = readReg(0, temp, 100);
+    len = readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
     data = anaysisData(temp ,len);
     if(data.exist){
       old = (bool)status;
@@ -176,8 +176,8 @@ uint8_t DFRobot_C4001::getTrigSensitivity(void)
     return temp;
   }else{
     sResponseData_t responseData;
-    uint8_t temp[100] = {0};
-    readReg(0, temp, 100);
+    uint8_t temp[DFROBOT_C4001_BUFFER_SIZE] = {0};
+    readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
     String data = "getSensitivity";
     responseData = wRCMD(data, (uint8_t)1);
     if(responseData.status){ 
@@ -213,8 +213,8 @@ uint8_t DFRobot_C4001::getKeepSensitivity(void)
     return temp;
   }else{
     sResponseData_t responseData;
-    uint8_t temp[100] = {0};
-    readReg(0, temp, 100);
+    uint8_t temp[DFROBOT_C4001_BUFFER_SIZE] = {0};
+    readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
     String data = "getSensitivity";
     responseData = wRCMD(data, (uint8_t)1);
     if(responseData.status){
@@ -391,7 +391,7 @@ uint8_t DFRobot_C4001::getTargetNumber(void)
     uint8_t len = 0;
     uint8_t temp[100] = {0};
     sAllData_t data;
-    len = readReg(0, temp, 100);
+    len = readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
     data = anaysisData(temp ,len);
     if(data.target.number != 0){
       flash_number = 0;
@@ -692,12 +692,12 @@ sAllData_t DFRobot_C4001::anaysisData(uint8_t * data, uint8_t len)
 sResponseData_t DFRobot_C4001::wRCMD(String cmd1, uint8_t count)
 {
   uint8_t len = 0;
-  uint8_t temp[200] = {0};
+  uint8_t temp[DFROBOT_C4001_BUFFER_SIZE] = {0};
   sResponseData_t responseData;
   sensorStop();
   writeReg(0, (uint8_t *)cmd1.c_str(), cmd1.length());
   delay(100);
-  len = readReg(0, temp, 200);
+  len = readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
   responseData = anaysisResponse(temp, len, count);
   delay(100);
   writeReg(0, (uint8_t *)START_SENSOR, strlen(START_SENSOR));
@@ -724,20 +724,20 @@ void DFRobot_C4001::writeCMD(String cmd1 , String cmd2, uint8_t count)
 bool DFRobot_C4001::sensorStop(void)
 {
   uint8_t len = 0;
-  uint8_t temp[200] = {0};
+  uint8_t temp[DFROBOT_C4001_BUFFER_SIZE] = {0};
   writeReg(0, (uint8_t *)STOP_SENSOR, strlen(STOP_SENSOR));
   delay(1000);
-  len = readReg(0, temp, 200);
+  len = readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
   while(1){
     if(len != 0){
       if (strstr((const char *)temp, "sensorStop") != NULL) {
         return true;
       }
     }
-    memset(temp, 0, 200);
+    memset(temp, 0, DFROBOT_C4001_BUFFER_SIZE);
     delay(400);
     writeReg(0, (uint8_t *)STOP_SENSOR, strlen(STOP_SENSOR));
-    len = readReg(0, temp, 200);
+    len = readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
     
   }
 }
