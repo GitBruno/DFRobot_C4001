@@ -133,7 +133,7 @@ public:
 #define REG_E_TRIG_RANGE_L      0x29
 #define REG_E_TRIG_RANGE_H      0x2A
 
-#define DFROBOT_C4001_BUFFER_SIZE 200
+#define DFROBOT_C4001_BUFFER_SIZE 240
 
 #define REG_RESULT_OBJ_MUN      0x10
 #define REG_RESULT_RANGE_L      0x11

@@ -389,7 +389,7 @@ uint8_t DFRobot_C4001::getTargetNumber(void)
     return _buffer.number;
   }else{
     uint8_t len = 0;
-    uint8_t temp[100] = {0};
+    uint8_t temp[DFROBOT_C4001_BUFFER_SIZE] = {0};
     sAllData_t data;
     len = readReg(0, temp, DFROBOT_C4001_BUFFER_SIZE);
     data = anaysisData(temp ,len);
