@@ -10,6 +10,11 @@
  */
 #include "DFRobot_C4001.h"
 
+#ifdef ESP32
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#endif
+
 DFRobot_C4001::DFRobot_C4001(){}
 DFRobot_C4001::~DFRobot_C4001(){}
 
@@ -831,6 +836,9 @@ int16_t DFRobot_C4001_UART::readReg(uint8_t reg, uint8_t *data, uint8_t len)
       if(i == len) return len;
       data[i++] = _serial->read();
     }
+#ifdef ESP32
+    vTaskDelay(1);  // Yield to other tasks - prevents memory bus saturation on dual-core ESP32
+#endif
   }
   len = reg;
   reg = len;
